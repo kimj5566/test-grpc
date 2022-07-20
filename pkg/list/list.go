@@ -18,11 +18,9 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"flag"
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -32,37 +30,20 @@ import (
 	pb "github.com/GoogleCloudPlatform/golang-samples/run/grpc-server-streaming/pkg/api/v1"
 )
 
-var (
-	logger     = log.New(os.Stdout, "", 0)
-	serverAddr = flag.String("server", "", "Server address (host:port)")
-	skipVerify = flag.Bool("skip-verify", false, "Skip server hostname verification in SSL validation [false]")
-	duration   = flag.Uint("duration", 10, "duration (in seconds) to stream the time from the server for")
-)
-
-func init() {
-	flag.Parse()
-	log.SetFlags(log.Flags() ^ log.Ltime ^ log.Ldate)
-}
-
 func List() {
 	var opts []grpc.DialOption
-	if *serverAddr == "" {
-		log.Fatal("-server is empty")
-	}
 
 	cred := credentials.NewTLS(&tls.Config{
-		InsecureSkipVerify: *skipVerify,
+		InsecureSkipVerify: false,
 	})
 	opts = append(opts, grpc.WithTransportCredentials(cred))
 
-	conn, err := grpc.Dial(*serverAddr, opts...)
-	if err != nil {
-		logger.Printf("failed to dial server %s: %v", *serverAddr, err)
-	}
+	conn, _ := grpc.Dial("grpc-server-streaming-yv5evqvhma-uc.a.run.app:443 ", opts...)
+
 	defer conn.Close()
 	client := pb.NewTimeServiceClient(conn)
 
-	if err := streamTime(client, *duration); err != nil {
+	if err := streamTime(client, 5); err != nil {
 		log.Fatal(err)
 	}
 }

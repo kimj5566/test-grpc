@@ -44,7 +44,7 @@ func init() {
 	log.SetFlags(log.Flags() ^ log.Ltime ^ log.Ldate)
 }
 
-func main() {
+func List() {
 	var opts []grpc.DialOption
 	if *serverAddr == "" {
 		log.Fatal("-server is empty")

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Package client is a small tool to query the streaming gRPC endpoint.
-package main
+package list
 
 import (
 	"context"

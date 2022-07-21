@@ -17,7 +17,7 @@ package list
 
 import (
 	"context"
-	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io"
 	"log"
@@ -33,12 +33,15 @@ import (
 func List() {
 	var opts []grpc.DialOption
 
-	cred := credentials.NewTLS(&tls.Config{
-		InsecureSkipVerify: false,
-	})
+	//cred := credentials.NewTLS(&tls.Config{
+	//	//InsecureSkipVerify: false,
+	//})
+	cp, _ := x509.SystemCertPool()
+	fmt.Println("hi from github")
+	cred := credentials.NewClientTLSFromCert(cp,"")
 	opts = append(opts, grpc.WithTransportCredentials(cred))
-
-	conn, _ := grpc.Dial("grpc-server-streaming-yv5evqvhma-uc.a.run.app:443 ", opts...)
+	ctx := context.Background()
+	conn, _ := grpc.DialContext(ctx, "", opts...)
 
 	defer conn.Close()
 	client := pb.NewTimeServiceClient(conn)
